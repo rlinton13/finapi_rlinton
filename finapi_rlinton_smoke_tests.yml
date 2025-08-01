@@ -9,12 +9,17 @@ resources:
           include:
             - main
 
+variables:
+  - group: LogAnalyticsSecrets
+
 pool:
   name: student-lab-pool
 
 steps:
   - script: |
-      /azagent/venv/bin/pip3 install pytest requests
+      export LOG_ANALYTICS_WORKSPACE_ID=$(LOG_ANALYTICS_WORKSPACE_ID)
+      export LOG_ANALYTICS_SHARED_KEY=$(LOG_ANALYTICS_SHARED_KEY)
+      /azagent/venv/bin/python3 -m pytest -v --tb=line  -W "ignore::DeprecationWarning" -s tests/smoke_tests_centralized.py --junitxml=smoke-results.xml
     displayName: "Install dependencies"
 
   - script: |
